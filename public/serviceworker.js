@@ -17,11 +17,18 @@ self.addEventListener('install', (event) => {
 
 // Listen for requests
 self.addEventListener('fetch', (event) => {
+    if(!navigator.onLine){
+        event.respondWith(caches.match('offline.html'));
+        return;
+    }
     event.respondWith(
         caches.match(event.request)
             .then(() => {
                 return fetch(event.request) 
-                    .catch(() => caches.match('offline.html'))
+                    .catch(() => {
+                        //console.log("SERVING OFFLINE... TRYING")
+                        caches.match('offline.html')
+                    })
             })
     )
 });
